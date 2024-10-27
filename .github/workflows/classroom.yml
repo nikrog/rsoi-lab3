@@ -23,15 +23,39 @@ jobs:
         timeout-minutes: 10
         run: docker compose build
 
-      - name: Run containers
-        timeout-minutes: 5
+      - name: Setup Posgres DB
         run: |
-          docker compose up -d
+          docker compose up -d postgres
+          docker compose logs postgres
+          sleep 5
+          cd postgres
+          psql "user=postgres hostaddr=127.0.0.1 port=5432 password=postgres" < scripts/db-v2.sql
+
+      - name: Run containers
+        timeout-minutes: 10
+        run: |
+          docker compose up -d reservation_service
+          docker compose up -d payment_service
+          docker compose up -d loyalty_service
+          docker compose up -d queue_service
+          docker compose up -d gateway_service
+
+          docker compose logs reservation_service
+          docker compose logs payment_service
+          docker compose logs loyalty_service
+          docker compose logs queue_service
+          docker compose logs gateway_service
+          
           ./scripts/wait-script.sh
         env:
           WAIT_PORTS: 8080,8070,8060,8050
 
       # TODO setup variant, service and port
+
+      - name: Wait 15s
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '15s'
 
       - name: Run API Tests
         timeout-minutes: 5
