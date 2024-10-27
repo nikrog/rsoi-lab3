@@ -17,4 +17,4 @@ async def get_hotels() -> Response:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
     else:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
+                        response=json.dumps({'message': ['Reservation Service unavailable']}))

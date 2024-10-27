@@ -11,14 +11,14 @@ getreservationb = Blueprint('get_reservation', __name__, )
 async def get_reservation(reservationUid: str) -> Response:
     if 'X-User-Name' not in request.headers.keys():
         return Response(status=400, content_type='application/json',
-                        response=json.dumps({'errors': ['User Name missing']}))
+                        response=json.dumps({'message': ['User Name missing']}))
 
     response = get_data_from_service('http://' + os.environ['RESERVATION_SERVICE_HOST'] + ':' + os.environ[
         'RESERVATION_SERVICE_PORT'] + '/api/v1/reservations/' + reservationUid, timeout=5,
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
+                        response=json.dumps({'message': ['Reservation Service unavailable']}))
 
     if response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
@@ -30,7 +30,7 @@ async def get_reservation(reservationUid: str) -> Response:
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
+                        response=json.dumps({'message': ['Reservation Service unavailable']}))
     if response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
 
