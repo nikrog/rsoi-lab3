@@ -37,21 +37,24 @@ async def get_me() -> Response:
         response = get_data_from_service('http://' + os.environ['PAYMENT_SERVICE_HOST'] + ':' + os.environ[
             'PAYMENT_SERVICE_PORT'] + '/api/v1/payment/' + res['paymentUid'], timeout=5)
 
-        if response is None:
-            return Response(status=500, content_type='application/json',
-                            response=json.dumps({'errors': ['Payment service not working']}))
-
         del res['paymentUid']
-        res['payment'] = response.json()
+        if response is None:
+            res['payment'] = {}
+        elif response.status_code != 200:
+            return Response(status=response.status_code, content_type='application/json', response=response.text)
+        else:
+            res['payment'] = response.json()
 
     response = get_data_from_service('http://' + os.environ['LOYALTY_SERVICE_HOST'] + ':' + os.environ[
         'LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty', timeout=5,
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Loyalty service is unavailable']}))
+        loyalty = {}
+    elif response.status_code != 200:
+        return Response(status=response.status_code, content_type='application/json', response=response.text)
+    else:
+        loyalty = response.json()
 
-    loyalty = response.json()
     result = {
         'reservations': reservations,
         'loyalty': loyalty

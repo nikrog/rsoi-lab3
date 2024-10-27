@@ -2,7 +2,7 @@ import os
 import json
 
 from quart import Blueprint, Response, request
-from .serviceRequests import delete_data_from_service
+from .serviceRequests import delete_data_from_service, post_data_to_service, get_data_from_service
 
 deletereservationb = Blueprint('delete_reservation', __name__, )
 
@@ -41,8 +41,16 @@ async def delete_reservation(reservationUid: str) -> Response:
         timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'message': ['Loyalty service not working']}))
+        response = post_data_to_service(
+            'http://' + os.environ['QUEUE_SERVICE_HOST'] + ':' + os.environ['QUEUE_SERVICE_PORT']
+            + '/api/v1/rollback_request', timeout=10,
+            data={
+                'url': (
+                        'http://' + os.environ['LOYALTY_SERVICE_HOST'] + ':'
+                        + os.environ['LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty'
+                ),
+                'headers': {'X-User-Name': request.headers['X-User-Name']}
+            })
 
     elif response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)

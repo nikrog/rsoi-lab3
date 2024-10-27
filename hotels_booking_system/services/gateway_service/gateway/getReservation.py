@@ -40,11 +40,12 @@ async def get_reservation(reservationUid: str) -> Response:
     response = get_data_from_service(
         'http://' + os.environ['PAYMENT_SERVICE_HOST'] + ':' + os.environ['PAYMENT_SERVICE_PORT'] + '/api/v1/payment/'
         + reservation['paymentUid'], timeout=5)
-    if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Payment service is unavailable']}))
-
     del reservation['paymentUid']
-    reservation['payment'] = response.json()
+    if response is None:
+        reservation['payment'] = {}
+    elif response.status_code != 200:
+        return Response(status=response.status_code, content_type='application/json', response=response.text)
+    else:
+        reservation['payment'] = response.json()
 
     return Response(status=200, content_type='application/json', response=json.dumps(reservation))

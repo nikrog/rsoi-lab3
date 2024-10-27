@@ -94,6 +94,9 @@ async def post_reservations() -> Response:
         timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
 
     if response is None:
+        response = delete_data_from_service('http://' + os.environ['PAYMENT_SERVICE_HOST'] + ':'
+                                            + os.environ['PAYMENT_SERVICE_PORT'] + '/api/v1/payment/'
+                                            + payment['paymentUid'], timeout=5)
         return Response(status=500, content_type='application/json',
                         response=json.dumps({'errors': ['Loyalty service not working']}))
 
@@ -109,6 +112,12 @@ async def post_reservations() -> Response:
                                             'paymentUid': payment['paymentUid']})
 
     if response is None:
+        response = delete_data_from_service('http://' + os.environ['PAYMENT_SERVICE_HOST'] + ':'
+                                            + os.environ['PAYMENT_SERVICE_PORT'] + '/api/v1/payment/'
+                                            + payment['paymentUid'], timeout=5)
+        response = delete_data_from_service('http://' + os.environ['LOYALTY_SERVICE_HOST'] + ':' + os.environ[
+                'LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty',
+            timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
         return Response(status=500, content_type='application/json',
                         response=json.dumps({'errors': ['Reservation service not working']}))
 
