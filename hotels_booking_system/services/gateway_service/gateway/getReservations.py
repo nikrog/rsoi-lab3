@@ -18,8 +18,8 @@ async def get_reservations() -> Response:
         timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'errors': ['Reservation service is unavailable']}))
 
     reservations = response.json()
     for res in reservations:
@@ -28,8 +28,8 @@ async def get_reservations() -> Response:
             res['hotel_id'], timeout=5)
 
         if response is None:
-            return Response(status=500, content_type='application/json',
-                            response=json.dumps({'errors': ['Reservation service not working']}))
+            return Response(status=503, content_type='application/json',
+                            response=json.dumps({'errors': ['Reservation service is unavailable']}))
 
         del res['hotel_id']
         res['hotel'] = response.json()

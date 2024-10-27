@@ -54,8 +54,8 @@ async def post_reservations() -> Response:
         timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Loyalty service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'errors': ['Loyalty is unavailable']}))
 
     if response.status_code == 400:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
@@ -66,8 +66,8 @@ async def post_reservations() -> Response:
                 'LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty',
             timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
         if response2 is None:
-            return Response(status=500, content_type='application/json',
-                            response=json.dumps({'errors': ['Loyalty service not working']}))
+            return Response(status=503, content_type='application/json',
+                            response=json.dumps({'errors': ['Loyalty service is unavailable']}))
         loyalty = response.json()
     else:
         loyalty = response.json()
@@ -81,8 +81,8 @@ async def post_reservations() -> Response:
         timeout=5, headers={'X-User-Name': request.headers['X-User-Name']}, data={'price': price_with_discount})
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Payment service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'errors': ['Payment service is unavailable']}))
 
     if response.status_code == 400:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
@@ -97,8 +97,8 @@ async def post_reservations() -> Response:
         response = delete_data_from_service('http://' + os.environ['PAYMENT_SERVICE_HOST'] + ':'
                                             + os.environ['PAYMENT_SERVICE_PORT'] + '/api/v1/payment/'
                                             + payment['paymentUid'], timeout=5)
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Loyalty service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'errors': ['Loyalty service is unavailable']}))
 
     if response.status_code == 404 or response.status_code == 400:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
@@ -118,8 +118,8 @@ async def post_reservations() -> Response:
         response = delete_data_from_service('http://' + os.environ['LOYALTY_SERVICE_HOST'] + ':' + os.environ[
                 'LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty',
             timeout=5, headers={'X-User-Name': request.headers['X-User-Name']})
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'errors': ['Reservation service is unavailable']}))
 
     if response.status_code == 400:
         return Response(status=response.status_code, content_type='application/json', response=response.text)

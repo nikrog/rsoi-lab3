@@ -18,8 +18,8 @@ async def delete_reservation(reservationUid: str) -> Response:
                                         + reservationUid, timeout=5)
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'message': ['Reservation service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'message': ['Reservation is unavailable']}))
     elif response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
 
@@ -30,8 +30,8 @@ async def delete_reservation(reservationUid: str) -> Response:
                                         + reservation['paymentUid'], timeout=5)
 
     if response is None:
-        return Response(status=500, content_type='application/json',
-                        response=json.dumps({'message': ['Payment service not working']}))
+        return Response(status=503, content_type='application/json',
+                        response=json.dumps({'message': ['Payment service is unavailable']}))
 
     elif response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
