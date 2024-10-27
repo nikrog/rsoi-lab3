@@ -11,7 +11,7 @@ getreservationsb = Blueprint('get_reservations', __name__, )
 async def get_reservations() -> Response:
     if 'X-User-Name' not in request.headers.keys():
         return Response(status=400, content_type='application/json',
-                        response=json.dumps({'message': ['User name missing']}))
+                        response=json.dumps({'message': 'User name missing'}))
 
     response = get_data_from_service(
         'http://' + os.environ['RESERVATION_SERVICE_HOST'] + ':' + os.environ['RESERVATION_SERVICE_PORT'] + '/api/v1/reservations',
@@ -19,7 +19,7 @@ async def get_reservations() -> Response:
 
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'message': ['Reservation Service unavailable']}))
+                        response=json.dumps({'message': 'Reservation Service unavailable'}))
 
     reservations = response.json()
     for res in reservations:
@@ -29,7 +29,7 @@ async def get_reservations() -> Response:
 
         if response is None:
             return Response(status=503, content_type='application/json',
-                            response=json.dumps({'message': ['Reservation Service unavailable']}))
+                            response=json.dumps({'message': 'Reservation Service unavailable'}))
 
         del res['hotel_id']
         res['hotel'] = response.json()

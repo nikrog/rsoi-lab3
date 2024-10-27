@@ -11,7 +11,7 @@ deletereservationb = Blueprint('delete_reservation', __name__, )
 async def delete_reservation(reservationUid: str) -> Response:
     if 'X-User-Name' not in request.headers.keys():
         return Response(status=400, content_type='application/json',
-                        response=json.dumps({'message': ['User name missing']}))
+                        response=json.dumps({'message': 'User name missing'}))
 
     response = delete_data_from_service('http://' + os.environ['RESERVATION_SERVICE_HOST'] + ':'
                                         + os.environ['RESERVATION_SERVICE_PORT'] + '/api/v1/reservations/'
@@ -19,7 +19,7 @@ async def delete_reservation(reservationUid: str) -> Response:
 
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'message': ['Reservation Service unavailable']}))
+                        response=json.dumps({'message': 'Reservation Service unavailable'}))
     elif response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
 
@@ -31,7 +31,7 @@ async def delete_reservation(reservationUid: str) -> Response:
 
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'message': ['Payment service unavailable']}))
+                        response=json.dumps({'message': 'Payment service unavailable'}))
 
     elif response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
