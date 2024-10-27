@@ -19,7 +19,7 @@ async def get_me() -> Response:
 
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation service is unavailable']}))
+                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
 
     reservations = response.json()
     for res in reservations:
@@ -29,7 +29,7 @@ async def get_me() -> Response:
 
         if response is None:
             return Response(status=503, content_type='application/json',
-                            response=json.dumps({'errors': ['Reservation service is unavailable']}))
+                            response=json.dumps({'errors': ['Reservation Service unavailable']}))
 
         del res['hotel_id']
         res['hotel'] = response.json()

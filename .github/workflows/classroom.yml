@@ -23,7 +23,7 @@ jobs:
         timeout-minutes: 10
         run: docker compose build
 
-      - name: Setup Posgres DB
+      - name: Setup Postgres DB
         run: |
           docker compose up -d postgres
           docker compose logs postgres
@@ -52,10 +52,10 @@ jobs:
 
       # TODO setup variant, service and port
 
-      - name: Wait 15s
+      - name: Wait 5s
         uses: jakejarvis/wait-action@master
         with:
-          time: '15s'
+          time: '5s'
 
       - name: Run API Tests
         timeout-minutes: 5

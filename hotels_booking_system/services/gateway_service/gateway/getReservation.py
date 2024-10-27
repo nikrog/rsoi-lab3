@@ -18,7 +18,7 @@ async def get_reservation(reservationUid: str) -> Response:
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation service is unavailable']}))
+                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
 
     if response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
@@ -30,7 +30,7 @@ async def get_reservation(reservationUid: str) -> Response:
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Reservation service is unavailable']}))
+                        response=json.dumps({'errors': ['Reservation Service unavailable']}))
     if response.status_code != 200:
         return Response(status=response.status_code, content_type='application/json', response=response.text)
 

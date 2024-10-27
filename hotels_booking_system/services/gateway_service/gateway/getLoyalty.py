@@ -18,7 +18,7 @@ async def get_loyalty() -> Response:
                                      headers={'X-User-Name': request.headers['X-User-Name']})
     if response is None:
         return Response(status=503, content_type='application/json',
-                        response=json.dumps({'errors': ['Loyalty service is unavailable']}))
+                        response=json.dumps({'errors': ['Loyalty Service unavailable']}))
 
     loyalty = response.json()
 
