@@ -551,7 +551,7 @@ Makefile*
 *.qm
 *.prl
 
-# Qt unit tests
+# Qt unit unit_tests
 target_wrapper.*
 
 # QtCreator
