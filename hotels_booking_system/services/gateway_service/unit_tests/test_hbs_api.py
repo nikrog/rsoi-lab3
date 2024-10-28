@@ -1,6 +1,5 @@
 from mocks.gateway_mock import get_hotels, get_loyalty, get_reservation
-from quart import Response
-import json
+
 
 def test_get_hotels():
     assert get_hotels().status == '200 OK'
