@@ -1,7 +1,7 @@
 import time
 import random
 
-CIRCUIT_BREAKER_BAN_TIME = 60 * 60
+CIRCUIT_BREAKER_BAN_TIME = 1 * 60
 CIRCUIT_BREAKER_CONNECT_CHANCE = 25
 CIRCUIT_BREAKER_CONNECT_TRIES = 5
 
@@ -26,7 +26,7 @@ class CircuitBreaker:
             # проверка на превышение лимита неудачных запросов к сервису
             if self.requests_data[url][0] == -1:
                 # открытое состояние (запрос к сервису не разрешен)
-                if self.requests_data[url][1] < time.time(): # > и уменьшить BAN TIME с 3600 сек на 30 сек???
+                if self.requests_data[url][1] > time.time(): # > и уменьшить BAN TIME с 3600 сек на 30 сек???
                     return False
                 else:
                     # полуоткрытое состояние (некоторые запросы к сервису разрешаются,
