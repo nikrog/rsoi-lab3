@@ -1,7 +1,7 @@
 import time
 import random
 
-CIRCUIT_BREAKER_BAN_TIME = 1 * 60
+CIRCUIT_BREAKER_BAN_TIME = 1 * 60  # 1 min
 CIRCUIT_BREAKER_CONNECT_CHANCE = 25
 CIRCUIT_BREAKER_CONNECT_TRIES = 5
 
@@ -15,18 +15,18 @@ class CircuitBreaker:
     def __init__(self):
         self.requests_data = {}
 
-    def try_connect(self, url):
-        # добавление нового запроса в circuit braker для отслеживания доступности сервиса
+    def try_connect(self, service_name):
+        # добавление нового сервиса в circuit braker для отслеживания доступности сервиса
         # (закрытое состояние, запрос разрешен)
-        if url not in self.requests_data.keys():
-            self.requests_data[url] = [0, time.time()]
+        if service_name not in self.requests_data.keys():
+            self.requests_data[service_name] = [0, time.time()]
             return True
-        # данный запрос уже отслеживается circuit braker
+        # данный сервис уже отслеживается circuit braker
         else:
             # проверка на превышение лимита неудачных запросов к сервису
-            if self.requests_data[url][0] == -1:
+            if self.requests_data[service_name][0] == -1:
                 # открытое состояние (запрос к сервису не разрешен)
-                if self.requests_data[url][1] > time.time(): # > и уменьшить BAN TIME с 3600 сек на 30 сек???
+                if self.requests_data[service_name][1] > time.time():
                     return False
                 else:
                     # полуоткрытое состояние (некоторые запросы к сервису разрешаются,
@@ -36,21 +36,21 @@ class CircuitBreaker:
         # закрытое состояние circuit braker (запрос к сервису разрешен)
         return True
 
-    def connection_error(self, url):
+    def connection_error(self, service_name):
         # переход из полуоткрытого в открытое состояние circuit braker
-        if self.requests_data[url][0] == -1:
-            self.requests_data[url][1] = time.time() + CIRCUIT_BREAKER_BAN_TIME
+        if self.requests_data[service_name][0] == -1:
+            self.requests_data[service_name][1] = time.time() + CIRCUIT_BREAKER_BAN_TIME
             return
 
         # увеличение счетчика неудачных попыток обращения к целевому сервису
-        self.requests_data[url][0] += 1
+        self.requests_data[service_name][0] += 1
 
         # если превышен лимит неудачных запросов к сервису,
         # то переходим из закрытого в открытое состояние circuit braker
-        if self.requests_data[url][0] >= CIRCUIT_BREAKER_CONNECT_TRIES:
-            self.requests_data[url][0] = -1
-            self.requests_data[url][1] = time.time() + CIRCUIT_BREAKER_BAN_TIME
+        if self.requests_data[service_name][0] >= CIRCUIT_BREAKER_CONNECT_TRIES:
+            self.requests_data[service_name][0] = -1
+            self.requests_data[service_name][1] = time.time() + CIRCUIT_BREAKER_BAN_TIME
 
-    def connection_successful(self, url):
+    def connection_successful(self, service_name):
         # сброс счетчика неудачных запросов к сервису после каждого удачного
-        self.requests_data[url][0] = 0
+        self.requests_data[service_name][0] = 0

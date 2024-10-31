@@ -43,8 +43,9 @@ async def delete_reservation(reservationUid: str) -> Response:
     if response is None:
         response = post_data_to_service(
             'http://' + os.environ['QUEUE_SERVICE_HOST'] + ':' + os.environ['QUEUE_SERVICE_PORT']
-            + '/api/v1/rollback_request', timeout=10,
+            + '/api/v1/post_queue', timeout=10,
             data={
+                'method': 'DELETE',
                 'url': (
                         'http://' + os.environ['LOYALTY_SERVICE_HOST'] + ':'
                         + os.environ['LOYALTY_SERVICE_PORT'] + '/api/v1/loyalty'
